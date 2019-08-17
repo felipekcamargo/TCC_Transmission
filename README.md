@@ -1,3 +1,3 @@
-# TCC_Transmission
+# TCC_Capture
 
-This project has a objetive to transmit data using high frequencies. The language used for this TCC is Matlab reserved language.
+This project has a objetive to Capture data using high frequencies. The language used for this TCC is Matlab reserved language.
