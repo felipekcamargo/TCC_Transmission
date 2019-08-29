@@ -23,15 +23,19 @@ DAQ_2 = timetable(seconds(timestamps),ch1);
 %% Plot Data
 
 %Plot para o domínio da frequência
+control = 0;
 
-my_fft(DAQ_2.Variables,192000);
-
+while(1)
+    my_fft(DAQ_2.Variables,192000);
+    
+end
+    
 % Plot the acquired data on labeled axes.
-figure
-plot(DAQ_2.Time, DAQ_2.Variables)
-xlabel('Time')
-ylabel('Amplitude (V)')
-legend(DAQ_2.Properties.VariableNames)
+%figure
+%plot(DAQ_2.Time, DAQ_2.Variables)
+%xlabel('Time')
+%ylabel('Amplitude (V)')
+%legend(DAQ_2.Properties.VariableNames)
 
 
 
@@ -50,16 +54,16 @@ freq = k/T;
 X = fftn(x)/N;                      % X recebe a FFT normalizada do vetor x sobre N
 cutOff = ceil(N/2);                 % cutOff ajusta o eixo X
 X = X(1:cutOff);
-figure();
-frequency = freq(1:cutOff);
+%figure();
+%frequency = freq(1:cutOff);
 amplitude = abs(X);
-plot(frequency, amplitude);        % Plota a transformada de Fourier e o valor de X em módulo
-title('Fast Fourier Transform');
-xlabel('Frequency (Hz)');
-ylabel('Amplitude');
+%plot(frequency, amplitude);        % Plota a transformada de Fourier e o valor de X em módulo
+%title('Fast Fourier Transform');
+%xlabel('Frequency (Hz)');
+%ylabel('Amplitude');
 count = 0;
 while count < 200
-    if amplitude(count+2000) > 9.0e-06
+    if amplitude(count+7500) > 1.5e-07
         fprintf('Worked!');
         break;
     end
