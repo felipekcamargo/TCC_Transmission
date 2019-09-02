@@ -4,8 +4,8 @@ s = daq.createSession('directsound');
 
 %% Set Session Properties
 % Set properties that are not using default values.
-s.Rate = 192000;
-s.NumberOfScans = 192000;
+s.Rate = 44100;
+s.NumberOfScans = 44100; %mudar para 44100
 
 %% Add Channels to Session
 % Add channels and set channel properties, if any.
@@ -26,7 +26,7 @@ DAQ_2 = timetable(seconds(timestamps),ch1);
 control = 0;
 
 while(1)
-    my_fft(DAQ_2.Variables,192000);
+    my_fft(DAQ_2.Variables,44100);
     
 end
     
