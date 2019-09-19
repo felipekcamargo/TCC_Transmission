@@ -5,7 +5,7 @@ s = daq.createSession('directsound');
 %% Set Session Properties
 % Set properties that are not using default values.
 s.Rate = 44100;
-s.NumberOfScans = 44100; %mudar para 44100
+s.NumberOfScans = 2940%44100; %mudar para 44100
 
 %% Add Channels to Session
 % Add channels and set channel properties, if any.
@@ -28,6 +28,7 @@ control = 0;
 while(1)
     my_fft(DAQ_2.Variables,44100);
     %pause(0.25)
+    %fprintf('Worked!');
     [data, timestamps, starttime] = startForeground(s);
     ch1 = data(:,1);
     DAQ_2 = timetable(seconds(timestamps),ch1);
@@ -65,13 +66,13 @@ title('Fast Fourier Transform');
 xlabel('Frequency (Hz)');
 ylabel('Amplitude');
 count = 0;
-while count < 200
-    if amplitude(count+6000) > 1.5e-07
-        fprintf('Worked!');
-        break;
-    end
-    count = count + 1;
-end
+% while count < 200
+%     if amplitude(count+6000) > 1.5e-07
+%         fprintf('Worked!');
+%         break;
+%     end
+%     count = count + 1;
+% end
 
 end
 
