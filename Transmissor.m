@@ -1,4 +1,4 @@
-infor=[1];
+infor=[0,1,1,0,1,1,0,1];
 repeat=1;
 length(infor);
 len = 3;                                       % Length (sec)
@@ -12,9 +12,9 @@ lInfSig=length(infSignal);
 i=1;
 k=1;
 m=1;
-tt=length(infSignal)/(repeat*length(infor));
+tt=length(infSignal)/(repeat*length(infor)); 
 rpts=length(infSignal)/repeat;
-iSig=rpts/length(infor)
+iSig=rpts/length(infor) %duração de 1 bit
 chave=0;
 
 for l=1:repeat
@@ -46,32 +46,59 @@ hp3=highpass(lp3,f3*0.95,Fs);
 signal=hp;
 signal2=hp2;
 signal3=hp3; 
-mxSignal=signal+signal2+signal3;
+%mxSignal=signal+signal2+signal3;
 lp4=lowpass(mxSignal,23500,Fs);
 hp4=highpass(lp4,17000,Fs);
 %mxSignal=hp4*infSignal;
 i=1;
 for i=1:length(mxSignal)
     if infSignal(1,i)==0
-        mxSignal(1,i)=0;
+        mxSignal(1,i)=signal3(1,i);
         
     else
-        mxSignal(1,i)=hp4(1,i);
+        mxSignal(1,i)=signal(1,i);
     end
         
 end
 lpf=lowpass(mxSignal,f3+500,Fs);
 hpf=highpass(lpf,f-500,Fs);
 mxSignal=hpf;
-%sound(signal,Fs)                               % Original Signal
-%sound(signal2,Fs)                               % Original Signal
-%sound(signal3,Fs)                               % Original Signal
 sound(mxSignal,Fs)
-%plot(mxSignal)
 plot(mxSignal)
+
 %noise = signal + 0.1*randn(size(signal));
 
-%pause(3)                                       % Wait For First Sound To Finish Playing
-%sound(noise, Fs)
-%bandpass(signal,[20500 21500],Fs)
-%sound(signal)
+interpretaBits(mxSignal,18500,17500,iSig,length(infor),Fs)
+
+function sinal_interpretado = interpretaBits(sinal_N_interpret,frequencia_corte_sup,frequencia_corte_inf,bit_dur,quantBits,Fs)
+
+hp=bandpass(sinal_N_interpret,[frequencia_corte_inf frequencia_corte_sup],Fs);
+mediaBits=zeros(1,quantBits);
+counter_bits=0;
+
+for i =1:length(sinal_N_interpret)
+   if (i-(counter_bits*bit_dur))<=bit_dur-1
+       mediaBits(1,counter_bits+1)=mediaBits(1,counter_bits+1)+abs(hp(1,i));
+       
+   else
+       mediaBits(1,counter_bits+1)=mediaBits(1,counter_bits+1)+abs(hp(1,i));
+       mediaBits(1,counter_bits+1)=mediaBits(1,counter_bits+1)/bit_dur
+       floor(mediaBits(1,counter_bits+1))
+       counter_bits=counter_bits+1;
+   
+   end
+end
+
+for i=1:quantBits
+    if floor(mediaBits(1,i)*100)<=0
+        mediaBits(1,i)=0;
+    else
+        mediaBits(1,i)=1;
+    end
+end
+mediaBits
+subplot(1,2,1)
+plot(hp)
+subplot(1,2,2)
+plot(mediaBits)
+end

@@ -5,7 +5,7 @@ s = daq.createSession('directsound');
 %% Set Session Properties
 % Set properties that are not using default values.
 s.Rate = 44100;
-s.NumberOfScans = 2940%44100; %mudar para 44100
+s.NumberOfScans = 2940%44100; 
 
 %% Add Channels to Session
 % Add channels and set channel properties, if any.
