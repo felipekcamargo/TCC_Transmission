@@ -47,8 +47,6 @@ ylabel('Amplitude (V)')
 %ylabel('Amplitude (V)')
 %legend(DAQ_2.Properties.VariableNames)
 
-
-
 %% Clean Up
 % Clear the session and channels, if any.
 clear s
@@ -67,10 +65,10 @@ function [X,freq,saida] = fourier(x,Fs)
     %figure();
     frequency = freq(1:cutOff);
     amplitude = abs(X);
-    %plot(frequency, amplitude);        % Plota a transformada de Fourier e o valor de X em m�dulo
-    %title('Fast Fourier Transform');
-    %xlabel('Frequency (Hz)');
-    %ylabel('Amplitude');
+    plot(frequency, amplitude);        % Plota a transformada de Fourier e o valor de X em m�dulo
+    title('Fast Fourier Transform');
+    xlabel('Frequency (Hz)');
+    ylabel('Amplitude');
     count = 0;
     j=397;
     while j<=407%407 � o id para as frequencias de 5900 e pouco a 6050 e poucos Hz
