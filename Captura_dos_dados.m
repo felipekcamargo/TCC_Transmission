@@ -20,6 +20,8 @@ addAudioInputChannel(s,'Audio0','1');
 ch1 = data(:,1);
 DAQ_2 = timetable(seconds(timestamps),ch1);
 
+bandpass(DAQ_2.Variables,[7000 7500],44100)
+
 %% Plot Data
 %Plot para o dominio da frequencia
 control = 0;
@@ -34,6 +36,9 @@ while(contador<=60)
     [data, timestamps, starttime] = startForeground(s);
     ch1 = data(:,1);
     DAQ_2 = timetable(seconds(timestamps),ch1);
+    
+    %bandpass(DAQ_2.Time,[5000 6000],DAQ_2.Variables)
+    
     contador=contador+1;
 end
   
