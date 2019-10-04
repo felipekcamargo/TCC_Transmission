@@ -1,10 +1,10 @@
-infor=[0,1,1,0,1,1,0,1];
+infor=[0,1,0,1,0,1,0,1];
 repeat=1;
 length(infor);
 len = 3;                                       % Length (sec)
-f= 18000;                                     % Frequency (Hz)
-f2= 1;
-f3= 4000;
+f= 18000; %BIT1                                     % Frequency (Hz)
+f2= 22000; %IDENTIFICACAO
+f3= 15000; %BIT 0
 Fs= 199192;                                     % Sampling Frequency (Hz)
 t = linspace(0, len, Fs*len);                 % Time Vector
 infSignal=sin(2*pi*f*t);
