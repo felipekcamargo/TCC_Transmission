@@ -30,10 +30,10 @@ lh2 = addlistener(s, 'ErrorOccurred', @(~,eventData) disp(getReport(eventData.Er
 %% Acquire Data 
 % Start the session in the background.
 startBackground(s)
-if triggerS==0
+if triggerS~=0
     tempodecaptura=1;
 else
-    tempodecaptura=3;
+    tempodecaptura=11;
 end
 pause(tempodecaptura) % Increase or decrease the pause duration to fit your needs.
 stop(s)
@@ -43,21 +43,22 @@ stop(s)
 ch1 = s.UserData.Data(:,1);
 DAQ_2 = timetable(seconds(s.UserData.TimeStamps),ch1);
 
-%% Plot Data
-% Plot the acquired data on labeled axes.
+%% %plot Data
+% %plot the acquired data on labeled axes.
 
-if(triggerS==0)
+if(triggerS~=0)
     f_desejada=18000;
-    f_desejadaZ=15000;
+    f_desejadaZ=20000;
     Samp_freq=132300;
     len_daq=length(DAQ_2.Variables);
-    [teste_passa_faixa,teste_bits]=interpretaBits(DAQ_2.Variables,f_desejada+500,f_desejada-500,length(DAQ_2.Variables)/8,8,length(DAQ_2.Variables)/tempodecaptura,13000);
-    [teste_passa_faixa_bitZ,teste_bitsZ]=interpretaBits(DAQ_2.Variables,f_desejadaZ+500,f_desejadaZ-500,length(DAQ_2.Variables)/8,8,length(DAQ_2.Variables)/tempodecaptura,13000);
+    ganho=14500;
+    [teste_passa_faixa,teste_bits]=interpretaBits(DAQ_2.Variables,f_desejada+500,f_desejada-500,length(DAQ_2.Variables)/8,8,length(DAQ_2.Variables)/tempodecaptura,ganho);
+    [teste_passa_faixa_bitZ,teste_bitsZ]=interpretaBits(DAQ_2.Variables,f_desejadaZ+500,f_desejadaZ-500,length(DAQ_2.Variables)/8,8,length(DAQ_2.Variables)/tempodecaptura,ganho);
     %subplot(3,1,1)
     %plot(DAQ_2.Time, DAQ_2.Variables)
-    subplot(2,1,1)
+    subplot(3,1,1)
     plot(teste_passa_faixa)
-    subplot(2,1,2)
+    subplot(3,1,2)
     plot(teste_passa_faixa_bitZ)
     xlabel('Time')
     ylabel('Amplitude (V)')
@@ -69,10 +70,13 @@ if(triggerS==0)
     %pause(500000)
 else %identifica se sinal existe e seta o trigger
     triggerS=0;
-    f_desejada=22000;
+    numerodeBits=11;
+    f_desejada=15000;
     Samp_freq=132300;
     len_daq=length(DAQ_2.Variables)
-    [teste_passa_faixa,teste_bits]=interpretaBits(DAQ_2.Variables,f_desejada+500,f_desejada-500,length(DAQ_2.Variables)/8,8,length(DAQ_2.Variables)/tempodecaptura,4)
+    ganhoBits=10000;
+    [teste_passa_faixa,teste_bits]=interpretaBits(DAQ_2.Variables,f_desejada+500,f_desejada-500,length(DAQ_2.Variables)/numerodeBits,numerodeBits,length(DAQ_2.Variables)/tempodecaptura,ganhoBits);
+    subplot(3,1,3)
     plot(teste_passa_faixa)
     xlabel('Time')
     ylabel('Amplitude (V)')
@@ -108,7 +112,7 @@ if isempty(src.UserData.StartTime)
 end
 
 % Uncomment the following lines to enable live plotting.
-% plot(eventData.TimeStamps, eventData.Data)
+% %plot(eventData.TimeStamps, eventData.Data)
 % xlabel('Time (s)')
 % ylabel('Amplitude (V)')
 % legend('ch1')
@@ -120,7 +124,7 @@ function [sinal_interpretado,bits_recebidos] = interpretaBits(sinal_N_interpret,
     hp=bandpass(sinal_N_interpret,[frequencia_corte_inf frequencia_corte_sup],Fs);
     mediaBits=zeros(1,quantBits);
     counter_bits=0;
-
+    media_Sinal=max(abs(hp))+min(abs(hp))/2
     for i =1:length(sinal_N_interpret)
        if (i-(counter_bits*bit_dur))<=bit_dur-1
            mediaBits(1,counter_bits+1)=mediaBits(1,counter_bits+1)+abs(hp(i,1));
@@ -128,13 +132,15 @@ function [sinal_interpretado,bits_recebidos] = interpretaBits(sinal_N_interpret,
        else
            mediaBits(1,counter_bits+1)=mediaBits(1,counter_bits+1)+abs(hp(i,1));
            mediaBits(1,counter_bits+1)=mediaBits(1,counter_bits+1)/bit_dur;
-           floor(mediaBits(1,counter_bits+1));
+           %floor(mediaBits(1,counter_bits+1));
            counter_bits=counter_bits+1;
 
        end
     end
     for i=1:quantBits
-        if floor(mediaBits(1,i)*valormult)<=0
+        mediaBits(1,i)
+        %if floor(mediaBits(1,i)*valormult)<=0
+        if mediaBits(1,i)<media_Sinal*0.22
             mediaBits(1,i)=0;
         else
             mediaBits(1,i)=1;
