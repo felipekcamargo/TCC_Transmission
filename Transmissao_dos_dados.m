@@ -1,25 +1,30 @@
 %transmissor
-lenTotal=15;
-bitsIni=[1,0,1];
-infor=[0,1,0,1,0];
-bitsFin=[1,0,1];
-infor=[bitsIni infor bitsFin]
+
+infor=[0,1,1,0,1];
 repeat=1;
-len=11;
-%emite_trigger(duracaotrigger)
-for i=0:5
-emite_info(infor,repeat,len)
-pause(len-1.35)
-i+1
+                                       % Length (sec)
+tempoPorBit=.5;
+bitsIni=[1,0,1]
+bitsFin=[1,1,1]
+infor=[bitsIni infor bitsFin]
+len = length(infor)*tempoPorBit;
+%emite_trigger(1)
+%emite_info([1,0,1],repeat,3)
+%pause(length([1,0,1]))
+for i=1:16
+    emite_info(infor,repeat,len)
+    pause(len-.8);
+    i=i+1;
 end
-%emite_info([1,0,0,0,1],repeat,1)
+%pause(len)
+%emite_info([1,0,1],repeat,3)
 
 
 
 function emite_info(infor,repeat,len)
     length(infor);
-    f= 15000;                                     % Frequency (Hz)
-    f3= 1000;
+    f= 20000;                                     % Frequency (Hz)
+    f3= 21000;
     Fs= 199192;                                     % Sampling Frequency (Hz)
     t = linspace(0, len, Fs*len);                 % Time Vector
     infSignal=sin(2*pi*f*t);
@@ -114,20 +119,17 @@ function sinal_interpretado = interpretaBits(sinal_N_interpret,frequencia_corte_
     hp=bandpass(sinal_N_interpret,[frequencia_corte_inf frequencia_corte_sup],Fs);
     mediaBits=zeros(1,quantBits);
     counter_bits=0;
-    length(sinal_N_interpret)
+
     for i =1:length(sinal_N_interpret)
-       if (i-(counter_bits*bit_dur))<=bit_dur-1 && i<length(sinal_N_interpret) && counter_bits<=quantBits
+       if (i-(counter_bits*bit_dur))<=bit_dur-1
            mediaBits(1,counter_bits+1)=mediaBits(1,counter_bits+1)+abs(hp(1,i));
+
        else
-           if i<length(sinal_N_interpret) && counter_bits<=quantBits
            mediaBits(1,counter_bits+1)=mediaBits(1,counter_bits+1)+abs(hp(1,i));
            mediaBits(1,counter_bits+1)=mediaBits(1,counter_bits+1)/bit_dur
            floor(mediaBits(1,counter_bits+1))
-           i
-           length(sinal_N_interpret)
            counter_bits=counter_bits+1;
-           counter_bits
-           end
+
        end
     end
     for i=1:quantBits

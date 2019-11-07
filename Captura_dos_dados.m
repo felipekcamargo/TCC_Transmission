@@ -33,7 +33,7 @@ startBackground(s)
 if triggerS~=0
     tempodecaptura=1;
 else
-    tempodecaptura=11;
+    tempodecaptura=5.5;
 end
 pause(tempodecaptura) % Increase or decrease the pause duration to fit your needs.
 stop(s)
@@ -71,9 +71,9 @@ if(triggerS~=0)
 else %identifica se sinal existe e seta o trigger
     triggerS=0;
     numerodeBits=11;
-    f_desejada=15000;
+    f_desejada=20000;
     Samp_freq=132300;
-    len_daq=length(DAQ_2.Variables)
+    len_daq=length(DAQ_2.Variables);
     ganhoBits=10000;
     [teste_passa_faixa,teste_bits]=interpretaBits(DAQ_2.Variables,f_desejada+500,f_desejada-500,length(DAQ_2.Variables)/numerodeBits,numerodeBits,length(DAQ_2.Variables)/tempodecaptura,ganhoBits);
     subplot(3,1,3)
@@ -82,7 +82,52 @@ else %identifica se sinal existe e seta o trigger
     ylabel('Amplitude (V)')
     legend(DAQ_2.Properties.VariableNames)
     teste_bits
-    stopALL=1
+    if teste_bits(1)==1 && teste_bits(2)==0 && teste_bits(3)==1 && teste_bits(9)==1 && teste_bits(10)==1 && teste_bits(11)==1
+		resultado=[teste_bits(4),teste_bits(5),teste_bits(6),teste_bits(7),teste_bits(8)]
+		stopALL=1;
+
+    elseif teste_bits(2)==1 && teste_bits(3)==0 && teste_bits(4)==1 && teste_bits(10)==1 && teste_bits(11)==1 && teste_bits(1)==1
+		resultado=[teste_bits(5),teste_bits(6),teste_bits(7),teste_bits(8),teste_bits(9)]
+		stopALL=1;
+	elseif teste_bits(3)==1 && teste_bits(4)==0 && teste_bits(5)==1 && teste_bits(11)==1 && teste_bits(1)==1 && teste_bits(2)==1
+		resultado=[teste_bits(6),teste_bits(7),teste_bits(8),teste_bits(9),teste_bits(10)]
+		stopALL=1;        
+
+	elseif teste_bits(4)==1 && teste_bits(5)==0 && teste_bits(6)==1 && teste_bits(1)==1 && teste_bits(2)==1 && teste_bits(3)==1
+		resultado=[teste_bits(7),teste_bits(8),teste_bits(9),teste_bits(10),teste_bits(11)]
+		stopALL=1;        
+
+	elseif teste_bits(5)==1 && teste_bits(6)==0 && teste_bits(7)==1 && teste_bits(2)==1 && teste_bits(3)==1 && teste_bits(4)==1
+		resultado=[teste_bits(8),teste_bits(9),teste_bits(10),teste_bits(11),teste_bits(1)]
+		stopALL=1;        
+
+	elseif teste_bits(6)==1 && teste_bits(7)==0 && teste_bits(8)==1 && teste_bits(3)==1 && teste_bits(4)==1 && teste_bits(5)==1
+		resultado=[teste_bits(9),teste_bits(10),teste_bits(11),teste_bits(1),teste_bits(2)]
+		stopALL=1;        
+
+	elseif teste_bits(7)==1 && teste_bits(8)==0 && teste_bits(9)==1 && teste_bits(4)==1 && teste_bits(5)==1 && teste_bits(6)==1
+		resultado=[teste_bits(10),teste_bits(11),teste_bits(1),teste_bits(2),teste_bits(3)]
+		stopALL=1;        
+
+	elseif teste_bits(8)==1 && teste_bits(9)==0 && teste_bits(10)==1 && teste_bits(5)==1 && teste_bits(6)==1 && teste_bits(7)==1
+		resultado=[teste_bits(11),teste_bits(1),teste_bits(2),teste_bits(3),teste_bits(4)]
+		stopALL=1;        
+
+	elseif teste_bits(9)==1 && teste_bits(10)==0 && teste_bits(11)==1 && teste_bits(6)==1 && teste_bits(7)==1 && teste_bits(8)==1
+		resultado=[teste_bits(1),teste_bits(2),teste_bits(3),teste_bits(4),teste_bits(5)]
+		stopALL=1;        
+
+	elseif teste_bits(10)==1 && teste_bits(11)==0 && teste_bits(1)==1 && teste_bits(7)==1 && teste_bits(8)==1 && teste_bits(9)==1
+		resultado=[teste_bits(2),teste_bits(3),teste_bits(4),teste_bits(5),teste_bits(6)]
+		stopALL=1;        
+
+	elseif teste_bits(11)==1 && teste_bits(1)==0 && teste_bits(2)==1 && teste_bits(8)==1 && teste_bits(9)==1 && teste_bits(10)==1
+		resultado=[teste_bits(3),teste_bits(4),teste_bits(5),teste_bits(6),teste_bits(7)]
+		stopALL=1;        
+
+    else
+        pause(0.5*tempodecaptura/numerodeBits)
+    end
 end
     
 %% Clean Up
@@ -124,21 +169,22 @@ function [sinal_interpretado,bits_recebidos] = interpretaBits(sinal_N_interpret,
     hp=bandpass(sinal_N_interpret,[frequencia_corte_inf frequencia_corte_sup],Fs);
     mediaBits=zeros(1,quantBits);
     counter_bits=0;
-    media_Sinal=max(abs(hp))+min(abs(hp))/2
+    media_Sinal=max(abs(hp))+min(abs(hp))/2;
     for i =1:length(sinal_N_interpret)
-       if (i-(counter_bits*bit_dur))<=bit_dur-1
+       if (i-(counter_bits*bit_dur))<=bit_dur-1 && counter_bits<=quantBits-1
            mediaBits(1,counter_bits+1)=mediaBits(1,counter_bits+1)+abs(hp(i,1));
 
        else
-           mediaBits(1,counter_bits+1)=mediaBits(1,counter_bits+1)+abs(hp(i,1));
-           mediaBits(1,counter_bits+1)=mediaBits(1,counter_bits+1)/bit_dur;
-           %floor(mediaBits(1,counter_bits+1));
-           counter_bits=counter_bits+1;
-
+           if counter_bits<=quantBits-1
+               mediaBits(1,counter_bits+1)=mediaBits(1,counter_bits+1)+abs(hp(i,1));
+               mediaBits(1,counter_bits+1)=mediaBits(1,counter_bits+1)/bit_dur;
+               %floor(mediaBits(1,counter_bits+1));
+               counter_bits=counter_bits+1;
+           end
        end
     end
     for i=1:quantBits
-        mediaBits(1,i)
+        mediaBits(1,i);
         %if floor(mediaBits(1,i)*valormult)<=0
         if mediaBits(1,i)<media_Sinal*0.22
             mediaBits(1,i)=0;
