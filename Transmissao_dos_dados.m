@@ -1,6 +1,6 @@
 %transmissor
 
-infor=[0,1,1,0,1];
+infor=[0,0,0,0,1]; % 'A'
 repeat=1;
                                        % Length (sec)
 tempoPorBit=.5;
@@ -61,7 +61,7 @@ function emite_info(infor,repeat,len)
     end
 
     sound(mxSignal,Fs)
-    plot(mxSignal)
+    %plot(mxSignal)
 
     %noise = signal + 0.1*randn(size(signal));
     %interpretaBits(mxSignal,f+100,f-100,iSig,length(infor),Fs,4)

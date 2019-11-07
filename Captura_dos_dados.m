@@ -45,28 +45,10 @@ DAQ_2 = timetable(seconds(s.UserData.TimeStamps),ch1);
 
 %% %plot Data
 % %plot the acquired data on labeled axes.
+resultado=[0,0,0,0,0];
 
 if(triggerS~=0)
-    f_desejada=18000;
-    f_desejadaZ=20000;
-    Samp_freq=132300;
-    len_daq=length(DAQ_2.Variables);
-    ganho=14500;
-    [teste_passa_faixa,teste_bits]=interpretaBits(DAQ_2.Variables,f_desejada+500,f_desejada-500,length(DAQ_2.Variables)/8,8,length(DAQ_2.Variables)/tempodecaptura,ganho);
-    [teste_passa_faixa_bitZ,teste_bitsZ]=interpretaBits(DAQ_2.Variables,f_desejadaZ+500,f_desejadaZ-500,length(DAQ_2.Variables)/8,8,length(DAQ_2.Variables)/tempodecaptura,ganho);
-    %subplot(3,1,1)
-    %plot(DAQ_2.Time, DAQ_2.Variables)
-    subplot(3,1,1)
-    plot(teste_passa_faixa)
-    subplot(3,1,2)
-    plot(teste_passa_faixa_bitZ)
-    xlabel('Time')
-    ylabel('Amplitude (V)')
-    legend(DAQ_2.Properties.VariableNames)
-    teste_bitsZ
-    median(teste_bitsZ)
-    triggerS=median(teste_bitsZ)
-        
+    
     %pause(500000)
 else %identifica se sinal existe e seta o trigger
     triggerS=0;
@@ -76,58 +58,68 @@ else %identifica se sinal existe e seta o trigger
     len_daq=length(DAQ_2.Variables);
     ganhoBits=10000;
     [teste_passa_faixa,teste_bits]=interpretaBits(DAQ_2.Variables,f_desejada+500,f_desejada-500,length(DAQ_2.Variables)/numerodeBits,numerodeBits,length(DAQ_2.Variables)/tempodecaptura,ganhoBits);
-    subplot(3,1,3)
     plot(teste_passa_faixa)
     xlabel('Time')
     ylabel('Amplitude (V)')
     legend(DAQ_2.Properties.VariableNames)
-    teste_bits
+    teste_bits;
     if teste_bits(1)==1 && teste_bits(2)==0 && teste_bits(3)==1 && teste_bits(9)==1 && teste_bits(10)==1 && teste_bits(11)==1
-		resultado=[teste_bits(4),teste_bits(5),teste_bits(6),teste_bits(7),teste_bits(8)]
+		resultado=[teste_bits(4),teste_bits(5),teste_bits(6),teste_bits(7),teste_bits(8)];
 		stopALL=1;
 
     elseif teste_bits(2)==1 && teste_bits(3)==0 && teste_bits(4)==1 && teste_bits(10)==1 && teste_bits(11)==1 && teste_bits(1)==1
-		resultado=[teste_bits(5),teste_bits(6),teste_bits(7),teste_bits(8),teste_bits(9)]
+		resultado=[teste_bits(5),teste_bits(6),teste_bits(7),teste_bits(8),teste_bits(9)];
 		stopALL=1;
 	elseif teste_bits(3)==1 && teste_bits(4)==0 && teste_bits(5)==1 && teste_bits(11)==1 && teste_bits(1)==1 && teste_bits(2)==1
-		resultado=[teste_bits(6),teste_bits(7),teste_bits(8),teste_bits(9),teste_bits(10)]
+		resultado=[teste_bits(6),teste_bits(7),teste_bits(8),teste_bits(9),teste_bits(10)];
 		stopALL=1;        
 
 	elseif teste_bits(4)==1 && teste_bits(5)==0 && teste_bits(6)==1 && teste_bits(1)==1 && teste_bits(2)==1 && teste_bits(3)==1
-		resultado=[teste_bits(7),teste_bits(8),teste_bits(9),teste_bits(10),teste_bits(11)]
+		resultado=[teste_bits(7),teste_bits(8),teste_bits(9),teste_bits(10),teste_bits(11)];
 		stopALL=1;        
 
 	elseif teste_bits(5)==1 && teste_bits(6)==0 && teste_bits(7)==1 && teste_bits(2)==1 && teste_bits(3)==1 && teste_bits(4)==1
-		resultado=[teste_bits(8),teste_bits(9),teste_bits(10),teste_bits(11),teste_bits(1)]
+		resultado=[teste_bits(8),teste_bits(9),teste_bits(10),teste_bits(11),teste_bits(1)];
 		stopALL=1;        
 
 	elseif teste_bits(6)==1 && teste_bits(7)==0 && teste_bits(8)==1 && teste_bits(3)==1 && teste_bits(4)==1 && teste_bits(5)==1
-		resultado=[teste_bits(9),teste_bits(10),teste_bits(11),teste_bits(1),teste_bits(2)]
+		resultado=[teste_bits(9),teste_bits(10),teste_bits(11),teste_bits(1),teste_bits(2)];
 		stopALL=1;        
 
 	elseif teste_bits(7)==1 && teste_bits(8)==0 && teste_bits(9)==1 && teste_bits(4)==1 && teste_bits(5)==1 && teste_bits(6)==1
-		resultado=[teste_bits(10),teste_bits(11),teste_bits(1),teste_bits(2),teste_bits(3)]
+		resultado=[teste_bits(10),teste_bits(11),teste_bits(1),teste_bits(2),teste_bits(3)];
 		stopALL=1;        
 
 	elseif teste_bits(8)==1 && teste_bits(9)==0 && teste_bits(10)==1 && teste_bits(5)==1 && teste_bits(6)==1 && teste_bits(7)==1
-		resultado=[teste_bits(11),teste_bits(1),teste_bits(2),teste_bits(3),teste_bits(4)]
+		resultado=[teste_bits(11),teste_bits(1),teste_bits(2),teste_bits(3),teste_bits(4)];
 		stopALL=1;        
 
 	elseif teste_bits(9)==1 && teste_bits(10)==0 && teste_bits(11)==1 && teste_bits(6)==1 && teste_bits(7)==1 && teste_bits(8)==1
-		resultado=[teste_bits(1),teste_bits(2),teste_bits(3),teste_bits(4),teste_bits(5)]
+		resultado=[teste_bits(1),teste_bits(2),teste_bits(3),teste_bits(4),teste_bits(5)];
 		stopALL=1;        
 
 	elseif teste_bits(10)==1 && teste_bits(11)==0 && teste_bits(1)==1 && teste_bits(7)==1 && teste_bits(8)==1 && teste_bits(9)==1
-		resultado=[teste_bits(2),teste_bits(3),teste_bits(4),teste_bits(5),teste_bits(6)]
+		resultado=[teste_bits(2),teste_bits(3),teste_bits(4),teste_bits(5),teste_bits(6)];
 		stopALL=1;        
 
 	elseif teste_bits(11)==1 && teste_bits(1)==0 && teste_bits(2)==1 && teste_bits(8)==1 && teste_bits(9)==1 && teste_bits(10)==1
-		resultado=[teste_bits(3),teste_bits(4),teste_bits(5),teste_bits(6),teste_bits(7)]
+		resultado=[teste_bits(3),teste_bits(4),teste_bits(5),teste_bits(6),teste_bits(7)];
 		stopALL=1;        
 
     else
         pause(0.5*tempodecaptura/numerodeBits)
     end
+    
+    if (resultado(1)==1 && resultado(2)==1 && (resultado(3)==1 || (resultado(4)==1 && resultado(5)==1))) || (resultado(1) ==0 && resultado(2) ==0 && resultado(3) ==0 && resultado(4) ==0 && resultado(5) ==0)  
+        a="Nenhuma mensagem recebida ou codigo ASCII invalido"
+        stopALL=0;
+    elseif stopALL==1
+        resultado
+        captura = flip(resultado);
+        bitToChar(captura)
+        %codigo do felipe
+    end
+    
 end
     
 %% Clean Up
@@ -138,6 +130,11 @@ clear s lh1 lh2
 end
 %% Callback Function
 % Define the callback function for the 'DataAvailable' event.
+
+function [saida] = bitToChar(bits) 
+saida = char(bi2de(bits)+ 64)
+end
+
 
 function recordData(src, eventData)
 % RECORDDATA(SRC, EVENTDATA) records the acquired data, timestamps and
